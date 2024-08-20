@@ -1,0 +1,75 @@
+##Cuales son los elementos en orden de POO:
+{
+=Clase, Atributos, Metodos.
+~Herencia,Encapsulamiento, Instancia.
+~Int,Class, printnl.
+}
+
+##Que libreria se usa para las operaciones trigonometricas:
+{
+~java.util
+=Math
+~JUnit
+}
+
+##Que significa que los atributos sean estaticos:
+{
+=Los atributos estáticos son compartidos por todas las instancias de una clase.
+~Los atributos estáticos pertenecen a una instancia específica de la clase.
+~Los atributos estaticos son los  que no se mueven en una clase.
+}
+
+##Que significa que los metodos sean estaticos:
+{
+=Los métodos estáticos pertenecen a la clase en sí y no a instancias particulares.
+~Los métodos estáticos pertenecen a una instancia específica de la clase.
+~Los métodos estaticos son los  que no se mueven en una clase.
+}
+
+##Que imprime el siguiente codigo:
+public class Main {
+
+    public static void main(String[] args) {
+        //System.out.println("Hello World!"); (Español)
+    }
+}
+{
+~Hola Mundo!
+~Hello World!
+=(Nada)
+{
+
+##Cuantas clases puede Heredar una Superclase:
+{
+~Puede heredar simplemente a una clase.
+~Esta clase no puede heredar.
+=Puede heredar infinitamente.
+}
+
+##Que palabra clave se usa para instanciar un objeto:
+{
+~Int.
+=new.
+~=.
+}
+
+##Que palabra clave se usa para que una clase herede de otra en Java:
+{
+~implements.
+~inherits.
+=extends.
+}
+
+##Como se accede a un método "protected" de una superclase desde una subclase en otro paquete:
+{
+~Solo desde dentro del mismo paquete.
+~Solo desde una subclase en el mismo paquete.
+=Desde cualquier subclase, incluso en otro paquete.
+}
+
+##Que afirmación es verdadera acerca del polimorfismo en Java:
+{
+~El polimorfismo permite que un objeto sea referenciado por variables de diferentes tipos, pero solo puede invocar métodos de su tipo más específico.
+=El polimorfismo permite que un objeto se comporte de diferentes maneras según el tipo de referencia que se utiliza para acceder a él.
+~El polimorfismo se refiere a la capacidad de una clase para heredar de múltiples superclases al mismo tiempo.
+}
