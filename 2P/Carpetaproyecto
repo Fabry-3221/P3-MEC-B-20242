@@ -1,0 +1,157 @@
+// Fabricio Benitez Gonzalez 7004299, David Alejandro Rincon Triana 7004319
+package eps; 
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Timer;
+
+class Paciente {
+    String cedula;
+    String categoriaEdad;
+    String servicioSolicitado;
+    String horaRegistro;
+
+    public Paciente(String cedula, String categoriaEdad, String servicioSolicitado, String horaRegistro) {
+        this.cedula = cedula;
+        this.categoriaEdad = categoriaEdad;
+        this.servicioSolicitado = servicioSolicitado;
+        this.horaRegistro = horaRegistro;
+    }
+
+    public String toString() {
+        return "Cédula: " + cedula + ", Categoría: " + categoriaEdad + ", Servicio: " + servicioSolicitado + ", Hora: " + horaRegistro;
+    }
+}
+
+public class EPSSimulacion extends JFrame {
+    private Queue<Paciente> colaPacientes = new LinkedList<>();
+    private DefaultListModel<String> pacientesListModel = new DefaultListModel<>();
+    private JLabel turnoActualLabel;
+    private JLabel numeroUsuariosLabel;
+    private Timer timer;
+    private int delay = 5000;
+
+    public EPSSimulacion() {
+        setTitle("Simulación de EPS");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // Sección de registro
+        JPanel panelRegistro = new JPanel();
+        panelRegistro.setLayout(new GridLayout(6, 2));
+
+        JLabel cedulaLabel = new JLabel("Número de cédula:");
+        JTextField cedulaField = new JTextField();
+        JLabel categoriaLabel = new JLabel("Categoría de edad:");
+        String[] categorias = {"Menor de 60 años", "Adulto mayor", "Discapacidad"};
+        JComboBox<String> categoriaComboBox = new JComboBox<>(categorias);
+        JLabel servicioLabel = new JLabel("Servicio solicitado:");
+        String[] servicios = {"Consulta médico general", "Consulta médico especializado", "Prueba de laboratorio", "Imágenes de diagnóstico"};
+        JComboBox<String> servicioComboBox = new JComboBox<>(servicios);
+        JButton registrarButton = new JButton("Registrar");
+
+        panelRegistro.add(cedulaLabel);
+        panelRegistro.add(cedulaField);
+        panelRegistro.add(categoriaLabel);
+        panelRegistro.add(categoriaComboBox);
+        panelRegistro.add(servicioLabel);
+        panelRegistro.add(servicioComboBox);
+        panelRegistro.add(new JLabel()); // Espaciador
+        panelRegistro.add(registrarButton);
+
+        add(panelRegistro, BorderLayout.NORTH);
+
+        // Sección de visualización de pacientes
+        JPanel panelPacientes = new JPanel();
+        panelPacientes.setLayout(new BorderLayout());
+
+        turnoActualLabel = new JLabel("Turno actual: Ninguno");
+        panelPacientes.add(turnoActualLabel, BorderLayout.NORTH);
+
+        JList<String> pacientesList = new JList<>(pacientesListModel);
+        JScrollPane scrollPane = new JScrollPane(pacientesList);
+        panelPacientes.add(scrollPane, BorderLayout.CENTER);
+
+        add(panelPacientes, BorderLayout.CENTER);
+
+        // Panel de control de cola y slider de velocidad
+        JPanel panelControl = new JPanel();
+        panelControl.setLayout(new BorderLayout());
+
+        numeroUsuariosLabel = new JLabel("Número de usuarios registrados: 0");
+        panelControl.add(numeroUsuariosLabel, BorderLayout.NORTH);
+
+        JSlider sliderVelocidad = new JSlider(1, 10, 5);
+        sliderVelocidad.setMajorTickSpacing(1);
+        sliderVelocidad.setPaintTicks(true);
+        sliderVelocidad.setPaintLabels(true);
+        sliderVelocidad.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                delay = 11000 - sliderVelocidad.getValue() * 1000;
+                if (timer != null) {
+                    timer.cancel();
+                    iniciarTimer();
+                }
+            }
+        });
+
+        panelControl.add(new JLabel("Velocidad del tiempo (segundos):"), BorderLayout.CENTER);
+        panelControl.add(sliderVelocidad, BorderLayout.SOUTH);
+
+        add(panelControl, BorderLayout.SOUTH);
+
+        // Acción del botón registrar
+        registrarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String cedula = cedulaField.getText();
+                if (cedula.matches("\\d{10}")) {
+                    String categoria = (String) categoriaComboBox.getSelectedItem();
+                    String servicio = (String) servicioComboBox.getSelectedItem();
+                    String horaRegistro = new SimpleDateFormat("HH:mm:ss").format(new Date());
+
+                    Paciente paciente = new Paciente(cedula, categoria, servicio, horaRegistro);
+                    colaPacientes.add(paciente);
+                    pacientesListModel.addElement(paciente.toString());
+                    numeroUsuariosLabel.setText("Número de usuarios registrados: " + colaPacientes.size());
+
+                    if (colaPacientes.size() == 1) {
+                        iniciarTimer();
+                    }
+
+                    cedulaField.setText("");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Cédula inválida. Debe contener exactamente 10 dígitos.");
+                }
+            }
+        });
+    }
+
+    private void iniciarTimer() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (!colaPacientes.isEmpty()) {
+                    Paciente paciente = colaPacientes.poll();
+                    turnoActualLabel.setText("Turno actual: " + paciente.toString());
+                    pacientesListModel.remove(0);
+                } else {
+                    turnoActualLabel.setText("Turno actual: Ninguno");
+                    timer.cancel();
+                }
+            }
+        }, delay, delay);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new EPSSimulacion().setVisible(true));
+    }
+}
